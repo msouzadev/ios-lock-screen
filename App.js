@@ -1,6 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View, ImageBackground } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import wallpaper from "./assets/images/wallpaper.webp";
 export default function App() {
   return (
@@ -10,6 +10,15 @@ export default function App() {
         <Text style={styles.date}>Tuesday, 8 November</Text>
         <Text style={styles.time}>15:26</Text>
       </View>
+
+      <View style={styles.footer}>
+        <View style={styles.icon}>
+          <MaterialCommunityIcons name="flashlight" size={24} color="white" />
+        </View>
+        <View style={styles.icon}>
+          <Ionicons name="ios-camera" size={24} color="white" />
+        </View>
+      </View>
       <StatusBar style="auto" />
     </ImageBackground>
   );
@@ -18,7 +27,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
+    alignItems: "stretch",
   },
   header: {
     justifyContent: "center",
@@ -35,5 +44,21 @@ const styles = StyleSheet.create({
     fontSize: 82,
     fontWeight: "bold",
     color: "#C3FFFE",
+  },
+  footer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingHorizontal: 30,
+    marginTop: "auto",
+    paddingVertical: 10,
+    height: 75,
+  },
+  icon: {
+    backgroundColor: "#00000050",
+    width: 50,
+    aspectRatio: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 50,
   },
 });
