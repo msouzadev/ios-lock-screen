@@ -2,13 +2,23 @@ import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View, ImageBackground } from "react-native";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import wallpaper from "./assets/images/wallpaper.webp";
+import dayjs from "dayjs";
+import { useEffect, useState } from "react";
+
 export default function App() {
+  const [date, setDate] = useState(dayjs());
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setDate(dayjs());
+    }, 1000 * 1);
+    return () => clearInterval(interval);
+  }, []);
   return (
     <ImageBackground source={wallpaper} style={styles.container}>
       <View style={styles.header}>
         <Ionicons name="ios-lock-closed" size={20} color="white" />
-        <Text style={styles.date}>Tuesday, 8 November</Text>
-        <Text style={styles.time}>15:26</Text>
+        <Text style={styles.date}>{date.format("dddd, DD MMMM")}</Text>
+        <Text style={styles.time}>{date.format("hh:mm")}</Text>
       </View>
 
       <View style={styles.footer}>
