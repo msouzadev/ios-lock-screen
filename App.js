@@ -5,6 +5,7 @@ import wallpaper from "./assets/images/wallpaper.webp";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 
+import NotificationsList from "./src/components/notificationsList/NotificationsList";
 export default function App() {
   const [date, setDate] = useState(dayjs());
   useEffect(() => {
@@ -15,12 +16,15 @@ export default function App() {
   }, []);
   return (
     <ImageBackground source={wallpaper} style={styles.container}>
-      <View style={styles.header}>
-        <Ionicons name="ios-lock-closed" size={20} color="white" />
-        <Text style={styles.date}>{date.format("dddd, DD MMMM")}</Text>
-        <Text style={styles.time}>{date.format("hh:mm")}</Text>
-      </View>
-
+      <NotificationsList
+        ListHeaderComponent={() => (
+          <View style={styles.header}>
+            <Ionicons name="ios-lock-closed" size={20} color="white" />
+            <Text style={styles.date}>{date.format("dddd, DD MMMM")}</Text>
+            <Text style={styles.time}>{date.format("hh:mm")}</Text>
+          </View>
+        )}
+      />
       <View style={styles.footer}>
         <View style={styles.icon}>
           <MaterialCommunityIcons name="flashlight" size={24} color="white" />
@@ -29,7 +33,7 @@ export default function App() {
           <Ionicons name="ios-camera" size={24} color="white" />
         </View>
       </View>
-      <StatusBar style="auto" />
+      <StatusBar style="light" />
     </ImageBackground>
   );
 }
