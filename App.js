@@ -5,11 +5,20 @@ import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import wallpaper from "./assets/images/wallpaper.webp";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
-import Animated, { SlideInDown, SlideInUp } from "react-native-reanimated";
+import Animated, {
+  interpolate,
+  SlideInDown,
+  SlideInUp,
+  useAnimatedStyle,
+  useSharedValue,
+} from "react-native-reanimated";
 import NotificationsList from "./src/components/notificationsList/NotificationsList";
 import SwipeUpToOpen from "./src/components/swipeUpToOpen/SwipeUpToOpen";
 export default function App() {
   const [date, setDate] = useState(dayjs());
+
+  const footerVisibility = useSharedValue(1);
+
   useEffect(() => {
     let timer = setInterval(() => {
       setDate(dayjs());
@@ -28,10 +37,21 @@ export default function App() {
     ),
     [date]
   );
+
+  const animatedFooterStyle = useAnimatedStyle(() => ({
+    marginTop: interpolate(footerVisibility.value, [0, 1], [-85, 0]),
+    opacity: footerVisibility.value,
+  }));
   return (
     <ImageBackground source={wallpaper} style={styles.container}>
-      <NotificationsList ListHeaderComponent={Header} />
-      <Animated.View entering={SlideInDown} style={styles.footer}>
+      <NotificationsList
+        footerVisibility={footerVisibility}
+        ListHeaderComponent={Header}
+      />
+      <Animated.View
+        entering={SlideInDown}
+        style={[styles.footer, animatedFooterStyle]}
+      >
         <View style={styles.icon}>
           <MaterialCommunityIcons name="flashlight" size={24} color="white" />
         </View>
