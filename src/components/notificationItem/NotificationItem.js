@@ -1,10 +1,38 @@
 import React from "react";
-import { View, StyleSheet, Image, Text } from "react-native";
-
+import {
+  View,
+  StyleSheet,
+  Image,
+  Text,
+  useWindowDimensions,
+} from "react-native";
+import Animated, {
+  useAnimatedStyle,
+  interpolate,
+  withTiming,
+} from "react-native-reanimated";
 export const NOTIFICATION_HEIGHT = 80;
-const NotificationItem = ({ data, index }) => {
+const NotificationItem = ({ data, index, listVisibility }) => {
+  const { height } = useWindowDimensions();
+  const containerHeight = height - 250 - 85;
+  const startPosition = NOTIFICATION_HEIGHT * index;
+  const animatedItemStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          translateY: interpolate(
+            listVisibility.value,
+            [0, 1],
+            [containerHeight - startPosition, 0]
+          ),
+        },
+        { scale: interpolate(listVisibility.value, [0, 1], [0.5, 1]) },
+      ],
+      opacity: listVisibility.value,
+    };
+  });
   return (
-    <View style={styles.container}>
+    <Animated.View style={[styles.container, animatedItemStyle]}>
       <Image source={data.icon} style={styles.icon} />
       <View style={{ flex: 1 }}>
         <Text style={styles.title}>{data.title}</Text>
@@ -13,7 +41,7 @@ const NotificationItem = ({ data, index }) => {
         </Text>
       </View>
       <Text style={styles.time}>{data.createdAt} ago</Text>
-    </View>
+    </Animated.View>
   );
 };
 const styles = StyleSheet.create({
