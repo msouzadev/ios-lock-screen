@@ -11,6 +11,7 @@ import Animated, {
   SlideInUp,
   useAnimatedStyle,
   useSharedValue,
+  useDerivedValue,
 } from "react-native-reanimated";
 import NotificationsList from "./src/components/notificationsList/NotificationsList";
 import SwipeUpToOpen from "./src/components/swipeUpToOpen/SwipeUpToOpen";
@@ -18,7 +19,9 @@ export default function App() {
   const [date, setDate] = useState(dayjs());
 
   const footerVisibility = useSharedValue(1);
-
+  const footerHeight = useDerivedValue(() =>
+    interpolate(footerVisibility.value, [0, 1], [0, -85])
+  );
   useEffect(() => {
     let timer = setInterval(() => {
       setDate(dayjs());
@@ -46,6 +49,7 @@ export default function App() {
     <ImageBackground source={wallpaper} style={styles.container}>
       <NotificationsList
         footerVisibility={footerVisibility}
+        footerHeight={footerHeight}
         ListHeaderComponent={Header}
       />
       <Animated.View

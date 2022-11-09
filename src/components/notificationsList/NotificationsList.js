@@ -9,13 +9,19 @@ import {
   withTiming,
   withSpring,
 } from "react-native-reanimated";
-const NotificationsList = ({ footerVisibility, ...flatListProps }) => {
+const NotificationsList = ({
+  footerHeight,
+  footerVisibility,
+  ...flatListProps
+}) => {
   const { height } = useWindowDimensions();
   const listVisibility = useSharedValue(1);
+
+  const scrollY = useSharedValue(0);
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
-      console.log({ contentOffsetY: event.contentOffset.y });
       const contentOffsetY = event.contentOffset.y;
+      scrollY.value = contentOffsetY;
       if (contentOffsetY < 10) {
         footerVisibility.value = withTiming(1, { duration: 300 });
       } else {
@@ -38,6 +44,8 @@ const NotificationsList = ({ footerVisibility, ...flatListProps }) => {
       data={notifications}
       renderItem={({ item, index }) => (
         <NotificationItem
+          footerHeight={footerHeight}
+          scrollY={scrollY}
           data={item}
           index={index}
           listVisibility={listVisibility}

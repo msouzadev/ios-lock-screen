@@ -9,21 +9,57 @@ import {
 import Animated, {
   useAnimatedStyle,
   interpolate,
-  withTiming,
+  Extrapolate,
+  useDerivedValue,
 } from "react-native-reanimated";
 export const NOTIFICATION_HEIGHT = 80;
-const NotificationItem = ({ data, index, listVisibility }) => {
+const NotificationItem = ({
+  data,
+  index,
+  listVisibility,
+  scrollY,
+  footerHeight,
+}) => {
   const { height } = useWindowDimensions();
-  const containerHeight = height - 250 - 85;
+  const containerHeight = useDerivedValue(
+    () => height - 250 - footerHeight.value
+  );
   const startPosition = NOTIFICATION_HEIGHT * index;
+
   const animatedItemStyle = useAnimatedStyle(() => {
+    const position1 = startPosition - containerHeight.value;
+    const position2 =
+      startPosition + NOTIFICATION_HEIGHT - containerHeight.value;
+    if (listVisibility.value >= 1) {
+      return {
+        opacity: interpolate(scrollY.value, [position1, position2], [0, 1]),
+        transform: [
+          {
+            translateY: interpolate(
+              scrollY.value,
+              [position1, position2],
+              [-NOTIFICATION_HEIGHT / 2, 0],
+              Extrapolate.CLAMP
+            ),
+          },
+          {
+            scale: interpolate(
+              scrollY.value,
+              [position1, position2],
+              [0.3, 1],
+              Extrapolate.CLAMP
+            ),
+          },
+        ],
+      };
+    }
     return {
       transform: [
         {
           translateY: interpolate(
             listVisibility.value,
             [0, 1],
-            [containerHeight - startPosition, 0]
+            [containerHeight.value - startPosition, 0]
           ),
         },
         { scale: interpolate(listVisibility.value, [0, 1], [0.5, 1]) },
@@ -31,6 +67,7 @@ const NotificationItem = ({ data, index, listVisibility }) => {
       opacity: listVisibility.value,
     };
   });
+
   return (
     <Animated.View style={[styles.container, animatedItemStyle]}>
       <Image source={data.icon} style={styles.icon} />
