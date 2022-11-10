@@ -38,7 +38,7 @@ const NotificationItem = ({
             translateY: interpolate(
               scrollY.value,
               [position1, position2],
-              [-NOTIFICATION_HEIGHT / 2, 0],
+              [-NOTIFICATION_HEIGHT / 1.4, 0],
               Extrapolate.CLAMP
             ),
           },
