@@ -41,6 +41,7 @@ const NotificationsList = ({
   });
   return (
     <Animated.FlatList
+      contentContainerStyle={{ paddingTop: 20 }}
       data={notifications}
       renderItem={({ item, index }) => (
         <NotificationItem

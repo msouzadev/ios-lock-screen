@@ -6,6 +6,7 @@ import {
   Text,
   useWindowDimensions,
 } from "react-native";
+import { BlurView } from "expo-blur";
 import Animated, {
   useAnimatedStyle,
   interpolate,
@@ -69,28 +70,31 @@ const NotificationItem = ({
   });
 
   return (
-    <Animated.View style={[styles.container, animatedItemStyle]}>
-      <Image source={data.icon} style={styles.icon} />
-      <View style={{ flex: 1 }}>
-        <Text style={styles.title}>{data.title}</Text>
-        <Text style={styles.subtitle} numberOfLines={2}>
-          {data.subtitle}
-        </Text>
-      </View>
-      <Text style={styles.time}>{data.createdAt} ago</Text>
+    <Animated.View style={animatedItemStyle}>
+      <BlurView tint="dark" intensity={100} style={styles.container}>
+        <Image source={data.icon} style={styles.icon} />
+        <View style={{ flex: 1 }}>
+          <Text style={styles.title}>{data.title}</Text>
+          <Text style={styles.subtitle} numberOfLines={2}>
+            {data.subtitle}
+          </Text>
+        </View>
+        <Text style={styles.time}>{data.createdAt} ago</Text>
+      </BlurView>
     </Animated.View>
   );
 };
 const styles = StyleSheet.create({
   container: {
     height: NOTIFICATION_HEIGHT - 10,
-    backgroundColor: "#00000075",
+    // backgroundColor: "#00000075",
     margin: 5,
     marginHorizontal: 10,
     padding: 13,
     borderRadius: 20,
     flexDirection: "row",
     alignItems: "center",
+    overflow: "hidden",
   },
   time: {
     color: "lightgray",

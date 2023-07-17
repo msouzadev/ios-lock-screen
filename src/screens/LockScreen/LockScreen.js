@@ -1,6 +1,13 @@
 import { useMemo } from "react";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, ImageBackground } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  ImageBackground,
+  Image,
+  useWindowDimensions,
+} from "react-native";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import wallpaper from "../../../assets/images/wallpaper.webp";
 import dayjs from "dayjs";
@@ -12,16 +19,24 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
   useDerivedValue,
+  useAnimatedGestureHandler,
+  withTiming,
+  Easing,
 } from "react-native-reanimated";
+import { PanGestureHandler } from "react-native-gesture-handler";
 import NotificationsList from "../../components/notificationsList/NotificationsList";
 import SwipeUpToOpen from "../../components/swipeUpToOpen/SwipeUpToOpen";
+import home2 from "../../../assets/images/home2.jpg";
+
 export default function LockScreen() {
   const [date, setDate] = useState(dayjs());
-
+  const lockScreenY = useSharedValue(0);
   const footerVisibility = useSharedValue(1);
   const footerHeight = useDerivedValue(() =>
     interpolate(footerVisibility.value, [0, 1], [0, -85])
   );
+
+  const { height } = useWindowDimensions();
   useEffect(() => {
     let timer = setInterval(() => {
       setDate(dayjs());
@@ -45,26 +60,81 @@ export default function LockScreen() {
     marginTop: interpolate(footerVisibility.value, [0, 1], [-85, 0]),
     opacity: footerVisibility.value,
   }));
+
+  const animatedContainerStyle = useAnimatedStyle(() => ({
+    transform: [
+      {
+        translateY: withTiming(lockScreenY.value, {
+          duration: 100,
+          easing: Easing.linear,
+        }),
+      },
+    ],
+  }));
+
+  const unlockGestureHandler = useAnimatedGestureHandler({
+    onStart: () => {
+      console.log("on start");
+    },
+    onActive: (event) => {
+      console.log("active");
+      lockScreenY.value = event.translationY;
+      console.log({ event });
+    },
+    onEnd: ({ velocityY }) => {
+      if (lockScreenY.value < -height / 2 || velocityY < -500) {
+        lockScreenY.value = withTiming(-height, { easing: Easing.linear });
+      } else {
+        lockScreenY.value = withTiming(0, { easing: Easing.linear });
+      }
+      console.log("on end");
+    },
+  });
+
   return (
-    <ImageBackground source={wallpaper} style={styles.container}>
-      <NotificationsList
-        footerVisibility={footerVisibility}
-        footerHeight={footerHeight}
-        ListHeaderComponent={Header}
+    <>
+      <Image
+        source={home2}
+        style={{ width: "100%", height: "100%", ...StyleSheet.absoluteFill }}
       />
-      <Animated.View
-        entering={SlideInDown}
-        style={[styles.footer, animatedFooterStyle]}
-      >
-        <View style={styles.icon}>
-          <MaterialCommunityIcons name="flashlight" size={24} color="white" />
-        </View>
-        <SwipeUpToOpen />
-        <View style={styles.icon}>
-          <Ionicons name="ios-camera" size={24} color="white" />
-        </View>
+
+      <Animated.View style={[{ flex: 1 }, animatedContainerStyle]}>
+        <ImageBackground source={wallpaper} style={styles.container}>
+          <NotificationsList
+            footerVisibility={footerVisibility}
+            footerHeight={footerHeight}
+            ListHeaderComponent={Header}
+          />
+          <Animated.View
+            entering={SlideInDown}
+            style={[styles.footer, animatedFooterStyle]}
+          >
+            <View style={styles.icon}>
+              <MaterialCommunityIcons
+                name="flashlight"
+                size={24}
+                color="white"
+              />
+            </View>
+            <SwipeUpToOpen />
+
+            <View style={styles.icon}>
+              <Ionicons name="ios-camera" size={24} color="white" />
+            </View>
+          </Animated.View>
+          <PanGestureHandler onGestureEvent={unlockGestureHandler}>
+            <Animated.View
+              style={{
+                position: "absolute",
+                width: "100%",
+                height: 100,
+                bottom: 0,
+              }}
+            />
+          </PanGestureHandler>
+        </ImageBackground>
       </Animated.View>
-    </ImageBackground>
+    </>
   );
 }
 
