@@ -3,8 +3,8 @@ React Native IOS lock screen UI  based on video: https://www.youtube.com/watch?v
 
 
 #Video
+![Simulator Screen Recording - iPhone 14 Pro Max - 2023-07-17 at 18 53 17](https://github.com/msouzadev/ios-lock-screen/assets/35267648/6823260d-1ae7-481a-a3ab-a77fdd886b37)
 
-![Simulator Screen Recording - iPhone 14 Pro Max - 2023-07-17 at 18 53 17](https://github.com/msouzadev/ios-lock-screen/assets/35267648/8b21486c-3544-4a9c-a836-b32f4aaca77a)
 
 
 Clone repo
